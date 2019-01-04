@@ -1,0 +1,34 @@
+#날씨 정보 갖고 오기
+
+from urllib.request import urlopen, Request
+import selenium
+import urllib
+import bs4
+
+loc='오산시'
+enc_loc=urllib.parse.quote(loc + '날씨')
+url='https://search.naver.com/search.naver?sm=top_hty&fbm=1&ie=utf8&query='
+
+req=Request(url + enc_loc)
+page=urlopen(req)
+html=page.read()
+soup=bs4.BeautifulSoup(html, 'html.parser')
+print('날씨정보입니다.')
+print('현재 '+ loc + ' 날씨는 ' + soup.find('p', class_='info_temperature').find('span', class_='todaytemp').text + '도 입니다.')
+print('오늘 최저 온도는 ' + soup.find('ul', class_="info_list").find('span', class_='merge').find('span' , class_='min').text + '도 입니다.')
+print('오늘 최고 온도는 ' + soup.find('ul', class_="info_list").find('span', class_='merge').find('span' , class_='max').text + '도 입니다.')
+
+stock=('https://finance.naver.com/')
+c_stock=('http://finance.sina.com.cn/realstock/company/sh000001/nc.shtml')
+
+stock_html=urlopen(stock)
+stock_soup=bs4.BeautifulSoup(stock_html, 'html.parser')
+c_stock_html=urlopen(c_stock)
+c_stock_soup=bs4.BeautifulSoup(c_stock_html, 'html.parser')
+print('\n')
+print('코스피 : '+ stock_soup.find('div' , 'kospi_area group_quot quot_opn').find('span' , class_='num').string + ' / ' +
+      stock_soup.find('div' , 'kospi_area group_quot quot_opn').find_all('span' , 'num2')[0].string + ' ' +
+      stock_soup.find('div', 'kospi_area group_quot quot_opn').find_all('span', 'blind')[2].string)
+print('코스닥 :  ' + stock_soup.find('div', 'kosdaq_area group_quot').find('span', class_='num').string + ' / ' +
+      stock_soup.find('div', 'kosdaq_area group_quot').find_all('span', 'num2')[0].string + ' ' +
+      stock_soup.find('div', 'kosdaq_area group_quot').find_all('span', 'blind')[2].string)
